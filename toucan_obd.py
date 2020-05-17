@@ -1,8 +1,7 @@
+#!/usr/bin/python3
 from influxdb import InfluxDBClient
 import time
 import obd
-
-connection = obd.OBD()
 
 # ssd for pi
 # continually reconnect? 
@@ -80,54 +79,43 @@ def get_barometric_pressure():
     response = connection.query(cmd)
     return(response.value.magnitude)
 
-
-def myLoop():
-    localtime = int(time.time())
-
-    speed = get_speed()
-    rpm = get_rpm()
-    engine_load = get_engine_load()
-    coolant_temp = get_coolant_temp()
-    intake_pressure = get_intake_pressure()
-    intake_temp =  get_intake_temp()
-    maf = get_maf()
-    distance_w_mil = get_distance_w_mil()
-    fuel_rail_pressure_direct = get_fuel_rail_pressure_direct()
-    commander_egr = get_commander_egr()
-    fuel_level = get_fuel_level()
-    barometric_pressure = get_barometric_pressure()
-
-    json_body = [
-        {
-            "measurement": "obd",
-            "fields": {
-                "mph": speed,
-                "rpm": rpm,
-                "engine_load":  engine_load,
-                "coolant_temp": coolant_temp,
-                "intake_pressure": intake_pressure,
-                "intake_temp":  intake_temp,
-                "maf": maf,
-                "distance_w_mil": distance_w_mil,
-                "fuel_rail_pressure_direct": fuel_rail_pressure_direct,
-                "commander_egr": commander_egr,
-                "fuel_level": fuel_level,
-                "barometric_pressure": barometric_pressure
-            },
-            "tags": {
-            "vehicle" : "fiat ducato"
-            },
-            "time": localtime
-     }
-    ]
-
-
-    print(json_body) #for debug
-
-    client = InfluxDBClient('localhost', 8086, 'root', 'root', 'toucan')
-
-    client.write_points(json_body)
-
-while True:
-    myLoop()
-    time.sleep(2)
+if __name__ == '__main__':
+    connection = obd.OBD()
+    while True:
+        speed = get_speed()
+        rpm = get_rpm()
+        engine_load = get_engine_load()
+        coolant_temp = get_coolant_temp()
+        intake_pressure = get_intake_pressure()
+        intake_temp =  get_intake_temp()
+        maf = get_maf()
+        distance_w_mil = get_distance_w_mil()
+        fuel_rail_pressure_direct = get_fuel_rail_pressure_direct()
+        commander_egr = get_commander_egr()
+        fuel_level = get_fuel_level()
+        barometric_pressure = get_barometric_pressure()
+    
+        json_body = [
+            {
+                "measurement": "obd",
+                    "fields": {
+                        "mph": speed,
+                        "rpm": rpm,
+                        "engine_load":  engine_load,
+                        "coolant_temp": coolant_temp,
+                        "intake_pressure": intake_pressure,
+                        "intake_temp":  intake_temp,
+                        "maf": maf,
+                        "distance_w_mil": distance_w_mil,
+                        "fuel_rail_pressure_direct": fuel_rail_pressure_direct,
+                        "commander_egr": commander_egr,
+                        "fuel_level": fuel_level,
+                        "barometric_pressure": barometric_pressure
+                 }
+           }
+         ]
+    
+        print(json_body) #for debug
+        client = InfluxDBClient(host='localhost', port=8086, database='toucan')
+        client.write_points(json_body)
+        time.sleep(2)
