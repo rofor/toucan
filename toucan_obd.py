@@ -3,10 +3,6 @@ from influxdb import InfluxDBClient
 import time
 import obd
 
-# ssd for pi
-# continually reconnect? 
-# add other sensors
-# own network hard wired
  
 def get_speed():
     cmd = obd.commands.SPEED
