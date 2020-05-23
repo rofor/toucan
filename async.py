@@ -3,6 +3,7 @@ from influxdb import InfluxDBClient
 import obd
 import time
 
+# define variables
 connection = obd.Async()
 client = InfluxDBClient(host='localhost', port=8086, database='toucan')
 
